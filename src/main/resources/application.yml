@@ -10,10 +10,26 @@ spring:
       routes:
         # ─── Auth Service (Ulises) ───
         # Login, registro, etc. NO necesita JWT
+        # Path=/auth/** cubre las llamadas desde el Vite proxy (envia /auth/login)
+        # Path=/api/auth/** cubre llamadas con prefijo /api (uso futuro)
         - id: auth-service
           uri: http://localhost:8080
           predicates:
-            - Path=/api/auth/**
+            - Path=/auth/**,/api/auth/**
+
+        # Usuarios, roles, permisos — también en Auth Service
+        - id: user-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/users/**
+        - id: role-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/roles/**
+        - id: permission-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/permissions/**
 
         # ─── Project Service (nosotros) ───
         # Contiene: Proyectos, Inversión, Tokenización, Wallet, etc.

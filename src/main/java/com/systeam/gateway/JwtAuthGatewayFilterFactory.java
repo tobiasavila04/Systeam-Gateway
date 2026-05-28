@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -33,19 +32,17 @@ public class JwtAuthGatewayFilterFactory
                     .getHeaders()
                     .getFirst("Authorization");
 
-            // Si no hay token, 401 directo
+            // Sin token: pasa sin inyectar headers
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                log.warn("Request sin Authorization header");
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+                return chain.filter(exchange);
             }
 
-            // Validamos el token llamando a Ulises
+            // Validamos el token llamando al Auth Service
             return authServiceClient.validate(authHeader)
                     .map(user -> {
-                        // Inyectamos los headers con la info del usuario
                         ServerHttpRequest mutatedRequest = exchange.getRequest()
                                 .mutate()
+                                .headers(h -> h.remove("Authorization"))
                                 .header("X-User-Id", user.userId().toString())
                                 .header("X-User-Email", user.email())
                                 .header("X-User-Roles",
@@ -63,10 +60,9 @@ public class JwtAuthGatewayFilterFactory
                                         .build());
                     })
                     .orElseGet(() -> {
-                        // Token invalido o Ulises no responde
                         log.warn("Token rechazado por Auth Service");
                         exchange.getResponse().setStatusCode(
-                                HttpStatus.UNAUTHORIZED);
+                                org.springframework.http.HttpStatus.UNAUTHORIZED);
                         return exchange.getResponse().setComplete();
                     });
         };
