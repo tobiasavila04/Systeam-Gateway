@@ -24,13 +24,93 @@ spring:
           filters:
             - JwtAuth
 
-        # ─── Wallet Service (futuro) ───
-        # - id: wallet-service
-        #   uri: http://localhost:8083
-        #   predicates:
-        #     - Path=/api/wallet/**
-        #   filters:
-        #     - JwtAuth
+        # ─── Tokenización Service ───
+        - id: tokenization-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/tokens/**
+          filters:
+            - JwtAuth
+
+        # ─── Investment Service ───
+        - id: investment-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/investments/**
+          filters:
+            - JwtAuth
+
+        # ─── Marketplace Service ───
+        - id: marketplace-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/marketplace/**
+          filters:
+            - JwtAuth
+
+        # ─── Dividend Service ───
+        - id: dividend-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/dividends/**
+          filters:
+            - JwtAuth
+
+        # ─── Wallet Service ───
+        - id: wallet-service
+          uri: http://localhost:8087
+          predicates:
+            - Path=/api/wallet/**
+          filters:
+            - JwtAuth
+
+        # ─── Voting & Rewards Service ───
+        - id: voting-service
+          uri: http://localhost:8088
+          predicates:
+            - Path=/api/voting/**,/api/rewards/**
+          filters:
+            - JwtAuth
+
+        # ─── Dashboard Service ───
+        - id: dashboard-service
+          uri: http://localhost:8089
+          predicates:
+            - Path=/api/dashboard/**
+          filters:
+            - JwtAuth
+
+        # ─── Insurance & Backing Service ───
+        - id: insurance-service
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/insurance/**
+          filters:
+            - JwtAuth
+
+        # ─── AI Service ───
+        - id: ai-service
+          uri: http://localhost:8091
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - JwtAuth
+
+        # ─── Notification Service ───
+        - id: notification-service
+          uri: http://localhost:8092
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - JwtAuth
+
+        # ─── Blockchain Service ───
+        - id: blockchain-service
+          uri: http://localhost:8093
+          predicates:
+            - Path=/api/blockchain/**
+          filters:
+            - JwtAuth
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin
