@@ -134,6 +134,14 @@ spring:
           predicates:
             - Path=/api/modules/**
 
+        # ─── Oracle Billing Service ───
+        - id: oracle-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/oracle/**
+          filters:
+            - JwtAuth
+
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin
 
