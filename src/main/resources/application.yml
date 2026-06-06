@@ -13,28 +13,28 @@ spring:
         # Path=/auth/** cubre las llamadas desde el Vite proxy (envia /auth/login)
         # Path=/api/auth/** cubre llamadas con prefijo /api (uso futuro)
         - id: auth-service
-          uri: http://localhost:8080
+          uri: ${USER_SERVICE_URL:http://localhost:8080}
           predicates:
-            - Path=/auth/**,/api/auth/**
+            - Path=/auth/**,/api/auth/**,/oauth2/**,/login/oauth2/**
 
         # Usuarios, roles, permisos — también en Auth Service
         - id: user-service
-          uri: http://localhost:8080
+          uri: ${USER_SERVICE_URL:http://localhost:8080}
           predicates:
             - Path=/api/users/**
         - id: role-service
-          uri: http://localhost:8080
+          uri: ${USER_SERVICE_URL:http://localhost:8080}
           predicates:
             - Path=/api/roles/**
         - id: permission-service
-          uri: http://localhost:8080
+          uri: ${USER_SERVICE_URL:http://localhost:8080}
           predicates:
             - Path=/api/permissions/**
 
         # ─── Project Service (nosotros) ───
         # Contiene: Proyectos, Inversión, Tokenización, Wallet, etc.
         - id: project-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/projects/**
           filters:
@@ -42,7 +42,7 @@ spring:
 
         # ─── Tokenización Service ───
         - id: tokenization-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/tokens/**
           filters:
@@ -50,7 +50,7 @@ spring:
 
         # ─── Investment Service ───
         - id: investment-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/investments/**
           filters:
@@ -58,7 +58,7 @@ spring:
 
         # ─── Marketplace Service ───
         - id: marketplace-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/marketplace/**
           filters:
@@ -66,15 +66,15 @@ spring:
 
         # ─── Dividend Service ───
         - id: dividend-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/api/dividends/**
+            - Path=/api/dividends/**,/api/dividendos/**
           filters:
             - JwtAuth
 
         # ─── Wallet Service ───
         - id: wallet-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/wallet/**
           filters:
@@ -82,7 +82,7 @@ spring:
 
         # ─── Voting & Rewards Service ───
         - id: voting-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/voting/**,/api/rewards/**
           filters:
@@ -90,7 +90,7 @@ spring:
 
         # ─── Dashboard Service ───
         - id: dashboard-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/dashboard/**
           filters:
@@ -98,7 +98,7 @@ spring:
 
         # ─── Insurance & Backing Service ───
         - id: insurance-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/insurance/**
           filters:
@@ -106,7 +106,7 @@ spring:
 
         # ─── AI Service ───
         - id: ai-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/ai/**
           filters:
@@ -114,7 +114,7 @@ spring:
 
         # ─── Notification Service ───
         - id: notification-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/notifications/**
           filters:
@@ -122,7 +122,7 @@ spring:
 
         # ─── Blockchain Service ───
         - id: blockchain-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/blockchain/**
           filters:
@@ -130,13 +130,13 @@ spring:
 
         # ─── Modules Status Service ───
         - id: modules-status-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/modules/**
 
         # ─── Oracle Billing Service ───
         - id: oracle-service
-          uri: http://localhost:8081
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/oracle/**
           filters:
@@ -144,15 +144,19 @@ spring:
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin
+        - RemoveRequestHeader=Origin
 
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:3000,http://localhost:5173"
+            allowedOrigins: 
+              - "http://localhost:3000"
+              - "http://localhost:5173"
+              - "https://project-1944cf83-7f15-4f33-89b.web.app"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
 
 auth:
   service:
-    url: ${AUTH_SERVICE_URL:http://localhost:8080}
+    url: ${AUTH_SERVICE_URL:${USER_SERVICE_URL:http://localhost:8080}}

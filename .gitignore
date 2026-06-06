@@ -1,6 +1,6 @@
 target/
 *.class
-*.jar
+# *.jar
 *.war
 
 ### STS ###
@@ -34,3 +34,9 @@ Thumbs.db
 
 ### Env ###
 .env
+.env.*
+!.env.example
+
+### Local Overrides ###
+cors-override.*
+build_output/
