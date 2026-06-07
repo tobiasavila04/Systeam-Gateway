@@ -16,6 +16,8 @@ spring:
           uri: ${USER_SERVICE_URL:http://localhost:8080}
           predicates:
             - Path=/auth/**,/api/auth/**,/oauth2/**,/login/oauth2/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*), /auth/$\{segment}
 
         # Usuarios, roles, permisos — también en Auth Service
         - id: user-service
