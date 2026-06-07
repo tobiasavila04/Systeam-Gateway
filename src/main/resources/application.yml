@@ -160,3 +160,13 @@ spring:
 auth:
   service:
     url: ${AUTH_SERVICE_URL:${USER_SERVICE_URL:http://localhost:8080}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
