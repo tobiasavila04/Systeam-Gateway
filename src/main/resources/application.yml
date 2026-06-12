@@ -155,6 +155,7 @@ spring:
               - "http://localhost:3000"
               - "http://localhost:5173"
               - "https://project-1944cf83-7f15-4f33-89b.web.app"
+              - "http://34.149.87.215.nip.io"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
