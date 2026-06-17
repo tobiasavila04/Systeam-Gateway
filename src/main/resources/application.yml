@@ -19,6 +19,14 @@ spring:
           filters:
             - RewritePath=/api/auth/(?<segment>.*), /auth/$\{segment}
 
+        # Búsqueda de usuarios por nombre (solo autenticado) — en Project Service
+        - id: user-search-service
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/users/search
+          filters:
+            - JwtAuth
+
         # Usuarios, roles, permisos — también en Auth Service
         - id: user-service
           uri: ${USER_SERVICE_URL:http://localhost:8080}

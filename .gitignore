@@ -40,3 +40,5 @@ Thumbs.db
 ### Local Overrides ###
 cors-override.*
 build_output/
+
+*/atl
