@@ -43,6 +43,17 @@ spring:
 
         # ─── Project Service (nosotros) ───
         # Contiene: Proyectos, Inversión, Tokenización, Wallet, etc.
+        # SSE stream de votos es público (solo lectura, sin JWT)
+        - id: project-vote-sse-stream
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/projects/*/votes/stream
+        # Catálogo público (sin JWT)
+        - id: project-catalog
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/projects/catalog
+        # El resto de projects requiere autenticación
         - id: project-service
           uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
@@ -87,6 +98,28 @@ spring:
           uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/wallet/**
+          filters:
+            - JwtAuth
+
+        # ─── Governance Service (votación de propuestas) ───
+        # SSE stream es público (solo lectura, sin JWT)
+        - id: governance-sse-stream
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/governance/proposals/*/votes/stream
+        # El resto de governance requiere autenticación
+        - id: governance-service
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/governance/**
+          filters:
+            - JwtAuth
+
+        # ─── Eventos Service ───
+        - id: eventos-service
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/eventos/**
           filters:
             - JwtAuth
 
