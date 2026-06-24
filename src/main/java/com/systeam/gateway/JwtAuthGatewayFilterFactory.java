@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -32,14 +33,20 @@ public class JwtAuthGatewayFilterFactory
                     .getHeaders()
                     .getFirst("Authorization");
 
-            // Sin token: pasa sin inyectar headers
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return chain.filter(exchange);
             }
 
-            // Validamos el token llamando al Auth Service
             return authServiceClient.validate(authHeader)
-                    .map(user -> {
+                    .flatMap(maybeUser -> {
+                        if (maybeUser.isEmpty()) {
+                            log.warn("Token rechazado por Auth Service");
+                            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return exchange.getResponse().setComplete();
+                        }
+
+                        ValidatedUser user = maybeUser.get();
+
                         ServerHttpRequest mutatedRequest = exchange.getRequest()
                                 .mutate()
                                 .headers(h -> h.remove("Authorization"))
@@ -58,12 +65,6 @@ public class JwtAuthGatewayFilterFactory
                                 exchange.mutate()
                                         .request(mutatedRequest)
                                         .build());
-                    })
-                    .orElseGet(() -> {
-                        log.warn("Token rechazado por Auth Service");
-                        exchange.getResponse().setStatusCode(
-                                org.springframework.http.HttpStatus.UNAUTHORIZED);
-                        return exchange.getResponse().setComplete();
                     });
         };
     }
