@@ -177,6 +177,14 @@ spring:
           predicates:
             - Path=/api/modules/**
 
+        # ⚙️ KYC Service ⚙️
+        - id: kyc-service
+          uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/kyc/**
+          filters:
+            - JwtAuth
+
         # ─── Oracle Billing Service ───
         - id: oracle-service
           uri: ${PROJECT_SERVICE_URL:http://localhost:8081}
