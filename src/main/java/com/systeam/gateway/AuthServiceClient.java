@@ -29,6 +29,7 @@ public class AuthServiceClient {
                 .retrieve()
                 .bodyToMono(ValidatedUser.class)
                 .map(Optional::of)
+                .retry(3)
                 .onErrorResume(e -> {
                     log.warn("Auth service call failed: {}", e.getMessage());
                     return Mono.just(Optional.empty());
